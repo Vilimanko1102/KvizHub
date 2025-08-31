@@ -1,0 +1,6 @@
+@KvizHubBack_HostAddress = http://localhost:5189
+
+GET {{KvizHubBack_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
