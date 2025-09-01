@@ -14,25 +14,37 @@ namespace KvizHubBack.Repositories
             _context = context;
         }
 
+        // ========================
+        // Dodavanje novog korisnika (registracija)
+        // ========================
         public void Add(User user)
         {
             _context.Users.Add(user);
-            _context.SaveChanges(); // SaveChanges odmah
+            _context.SaveChanges();
         }
 
+        // ========================
+        // Ažuriranje korisnika
+        // ========================
         public void Update(User user)
         {
             _context.Users.Update(user);
             _context.SaveChanges();
         }
 
+        // ========================
+        // Brisanje korisnika
+        // ========================
         public void Delete(User user)
         {
             _context.Users.Remove(user);
             _context.SaveChanges();
         }
 
-        public User GetById(int id)
+        // ========================
+        // Dohvatanje korisnika po ID
+        // ========================
+        public User? GetById(int id)
         {
             var users = _context.Users
                 .FromSqlRaw(
@@ -40,10 +52,13 @@ namespace KvizHubBack.Repositories
                     new OracleParameter("id", id))
                 .AsEnumerable();
 
-            return users.FirstOrDefault()!;
+            return users.FirstOrDefault();
         }
 
-        public User GetByUsername(string username)
+        // ========================
+        // Dohvatanje korisnika po korisničkom imenu
+        // ========================
+        public User? GetByUsername(string username)
         {
             var users = _context.Users
                 .FromSqlRaw(
@@ -51,12 +66,56 @@ namespace KvizHubBack.Repositories
                     new OracleParameter("username", username))
                 .AsEnumerable();
 
-            return users.FirstOrDefault()!;
+            return users.FirstOrDefault();
         }
 
+        // ========================
+        // Dohvatanje korisnika po emailu
+        // ========================
+        public User? GetByEmail(string email)
+        {
+            var users = _context.Users
+                .FromSqlRaw(
+                    @"SELECT * FROM ""Users"" WHERE ""Email"" = :email AND ROWNUM = 1",
+                    new OracleParameter("email", email))
+                .AsEnumerable();
+
+            return users.FirstOrDefault();
+        }
+
+        // ========================
+        // Dohvatanje korisnika po username ili email (za login)
+        // ========================
+        public User? GetByUsernameOrEmail(string usernameOrEmail)
+        {
+            var users = _context.Users
+                .FromSqlRaw(
+                    @"SELECT * FROM ""Users"" 
+                      WHERE ""Username"" = :ue OR ""Email"" = :ue AND ROWNUM = 1",
+                    new OracleParameter("ue", usernameOrEmail))
+                .AsEnumerable();
+
+            return users.FirstOrDefault();
+        }
+
+        // ========================
+        // Dohvatanje svih korisnika
+        // ========================
         public IEnumerable<User> GetAll()
         {
             return _context.Users.ToList();
+        }
+
+        // ========================
+        // Dohvatanje svih rezultata jednog korisnika
+        // ========================
+        public IEnumerable<QuizAttempt> GetUserQuizAttempts(int userId)
+        {
+            return _context.QuizAttempts
+                .Where(qa => qa.UserId == userId)
+                .Include(qa => qa.Quiz)
+                .Include(qa => qa.UserAnswers)
+                .ToList();
         }
     }
 }

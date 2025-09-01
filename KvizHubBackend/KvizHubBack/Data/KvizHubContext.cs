@@ -11,11 +11,12 @@ namespace KvizHubBack.Data
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
+        public DbSet<QuizAttempt> QuizAttempts { get; set; }
+        public DbSet<UserAnswer> UserAnswers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
 
             // --- USERS ---
             modelBuilder.Entity<User>(entity =>
@@ -23,9 +24,9 @@ namespace KvizHubBack.Data
                 entity.ToTable("Users");
                 entity.HasKey(u => u.Id);
                 entity.Property(u => u.Id)
-                .HasColumnName("Id")
+                      .HasColumnName("Id")
                       .HasColumnType("NUMBER")
-                      .ValueGeneratedOnAdd(); // ne koristimo IDENTITY
+                      .ValueGeneratedOnAdd();
             });
 
             // --- QUIZZES ---
@@ -34,9 +35,10 @@ namespace KvizHubBack.Data
                 entity.ToTable("Quizzes");
                 entity.HasKey(q => q.Id);
                 entity.Property(q => q.Id)
-                .HasColumnName("Id")
+                      .HasColumnName("Id")
                       .HasColumnType("NUMBER")
                       .ValueGeneratedOnAdd();
+
             });
 
             // --- QUESTIONS ---
@@ -45,7 +47,7 @@ namespace KvizHubBack.Data
                 entity.ToTable("Questions");
                 entity.HasKey(q => q.Id);
                 entity.Property(q => q.Id)
-                .HasColumnName("Id")
+                      .HasColumnName("Id")
                       .HasColumnType("NUMBER")
                       .ValueGeneratedOnAdd();
 
@@ -61,7 +63,7 @@ namespace KvizHubBack.Data
                 entity.ToTable("Answers");
                 entity.HasKey(a => a.Id);
                 entity.Property(a => a.Id)
-                .HasColumnName("Id")
+                      .HasColumnName("Id")
                       .HasColumnType("NUMBER")
                       .ValueGeneratedOnAdd();
 
@@ -75,6 +77,50 @@ namespace KvizHubBack.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // --- QUIZ ATTEMPTS ---
+            modelBuilder.Entity<QuizAttempt>(entity =>
+            {
+                entity.ToTable("QuizAttempts");
+                entity.HasKey(qa => qa.Id);
+                entity.Property(qa => qa.Id)
+                      .HasColumnName("Id")
+                      .HasColumnType("NUMBER")
+                      .ValueGeneratedOnAdd();
+
+                entity.HasOne(qa => qa.Quiz)
+                      .WithMany(q => q.QuizAttempts)
+                      .HasForeignKey(qa => qa.QuizId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(qa => qa.User)
+                      .WithMany(u => u.QuizAttempts)
+                      .HasForeignKey(qa => qa.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // --- USER ANSWERS ---
+            modelBuilder.Entity<UserAnswer>(entity =>
+            {
+                entity.ToTable("UserAnswers");
+                entity.HasKey(ua => ua.Id);
+                entity.Property(ua => ua.Id)
+                      .HasColumnName("Id")
+                      .HasColumnType("NUMBER")
+                      .ValueGeneratedOnAdd();
+
+                entity.HasOne(ua => ua.QuizAttempt)
+                      .WithMany(qa => qa.UserAnswers)
+                      .HasForeignKey(ua => ua.QuizAttemptId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(ua => ua.Question)
+                      .WithMany()
+                      .HasForeignKey(ua => ua.QuestionId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                // SelectedAnswerIds je lista, u bazi može biti JSON ili drugi tip
+                entity.Ignore(ua => ua.SelectedAnswerIds);
+            });
         }
     }
 }
