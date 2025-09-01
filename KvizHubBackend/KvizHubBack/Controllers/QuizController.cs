@@ -16,59 +16,31 @@ namespace KvizHubBack.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateQuiz([FromBody] QuizCreateDto dto)
-        {
-            var quiz = _service.CreateQuiz(dto);
-            return Ok(quiz);
-        }
+        public IActionResult Create([FromBody] QuizCreateDto dto) => Ok(_service.Create(dto));
 
-        [HttpGet]
-        public IActionResult GetAllQuizzes()
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, [FromBody] QuizUpdateDto dto) => Ok(_service.Update(id, dto));
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
         {
-            IEnumerable<QuizDto> quizzes = _service.GetAllQuizzes();
-            return Ok(quizzes);
+            _service.Delete(id);
+            return NoContent();
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetQuizById(int id)
+        public IActionResult GetById(int id) => Ok(_service.GetById(id));
+
+        [HttpGet]
+        public IActionResult GetAll() => Ok(_service.GetAll());
+
+        [HttpGet("filter")]
+        public IActionResult Filter([FromQuery] string? category, [FromQuery] string? difficulty, [FromQuery] string? search)
         {
-            try
-            {
-                var quiz = _service.GetQuizById(id);
-                return Ok(quiz);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
+            return Ok(_service.Filter(category, difficulty, search));
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateQuiz(int id, [FromBody] QuizUpdateDto dto)
-        {
-            try
-            {
-                var quiz = _service.UpdateQuiz(id, dto);
-                return Ok(quiz);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult DeleteQuiz(int id)
-        {
-            try
-            {
-                _service.DeleteQuiz(id);
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-        }
+        [HttpGet("{id}/results")]
+        public IActionResult GetResults(int id) => Ok(_service.GetQuizResults(id));
     }
 }

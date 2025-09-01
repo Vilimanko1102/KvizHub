@@ -34,24 +34,43 @@ namespace KvizHubBack.Repositories
             _context.SaveChanges();
         }
 
-        public Quiz GetById(int id)
+        public Quiz? GetById(int id)
         {
-            var quizzes = _context.Quizzes
-                            .FromSqlRaw(@"SELECT * FROM ""Quizzes"" WHERE ""Id"" = :id AND ROWNUM = 1",
-                                new OracleParameter("id", id))
-                            .AsEnumerable();   // materializes the query without EF appending FETCH
-
-            var quiz = quizzes.FirstOrDefault();
-
-            return quiz;
-
+            return _context.Quizzes
+                .FromSqlRaw(@"SELECT * FROM ""Quizzes"" WHERE ""Id"" = :id AND ROWNUM = 1",
+                    new OracleParameter("id", id))
+                .AsEnumerable()
+                .FirstOrDefault();
         }
 
         public IEnumerable<Quiz> GetAll()
         {
-            return _context.Quizzes
-                .Include(q => q.Questions)
-                .ThenInclude(q => q.Answers)
+            return _context.Quizzes.ToList();
+        }
+
+        public IEnumerable<Quiz> Filter(string? category, string? difficulty, string? search)
+        {
+            var query = _context.Quizzes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(category))
+                query = query.Where(q => q.Category == category);
+
+            if (!string.IsNullOrEmpty(difficulty))
+                query = query.Where(q => q.Difficulty.ToString() == difficulty);
+
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(q => q.Title.Contains(search) || q.Description.Contains(search));
+
+            return query.ToList();
+        }
+
+        
+
+        public IEnumerable<QuizAttempt> GetQuizResults(int quizId)
+        {
+            return _context.QuizAttempts
+                .Where(qa => qa.QuizId == quizId && qa.FinishedAt != null)
+                .Include(qa => qa.User)
                 .ToList();
         }
     }
