@@ -9,46 +9,29 @@ namespace KvizHubBack.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
-
-        public UserController(UserService userService)
-        {
-            _userService = userService;
-        }
+        private readonly IUserService _service;
+        public UserController(IUserService service) => _service = service;
 
         [HttpPost("register")]
         public IActionResult Register(UserRegisterDto dto)
         {
-            try
-            {
-                var result = _userService.Register(dto);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = _service.Register(dto);
+            return Ok(result);
         }
 
         [HttpPost("login")]
         public IActionResult Login(UserLoginDto dto)
         {
-            try
-            {
-                var result = _userService.Login(dto);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return Unauthorized(ex.Message);
-            }
+            var result = _service.Login(dto);
+            return Ok(result);
         }
 
         [HttpGet]
-        public IActionResult GetUsers()
+        public IActionResult GetAll()
         {
-            var users = _userService.GetAll();
+            var users = _service.GetAll();
             return Ok(users);
         }
     }
+
 }

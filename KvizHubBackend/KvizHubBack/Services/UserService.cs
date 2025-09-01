@@ -6,19 +6,15 @@ using System.Linq;
 
 namespace KvizHubBack.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
-        private readonly UserRepository _repo;
-
-        public UserService(UserRepository repo)
-        {
-            _repo = repo;
-        }
+        private readonly IUserRepository _repo;
+        public UserService(IUserRepository repo) => _repo = repo;
 
         public UserDto Register(UserRegisterDto dto)
         {
-            if (_repo.ExistsByUsername(dto.Username))
-                throw new System.Exception("Username already exists.");
+            if (_repo.GetByUsername(dto.Username) != null)
+                throw new Exception("Username already exists");
 
             var user = new User
             {
@@ -28,38 +24,19 @@ namespace KvizHubBack.Services
             };
 
             _repo.Add(user);
-
-            return new UserDto
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email
-            };
+            return new UserDto { Id = user.Id, Username = user.Username, Email = user.Email };
         }
 
         public UserDto Login(UserLoginDto dto)
         {
             var user = _repo.GetByUsername(dto.Username);
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-                throw new System.Exception("Invalid username or password.");
+                throw new Exception("Invalid username or password");
 
-            return new UserDto
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email
-            };
+            return new UserDto { Id = user.Id, Username = user.Username, Email = user.Email };
         }
 
-        public List<UserDto> GetAll()
-        {
-            return _repo.GetAll()
-                        .Select(u => new UserDto
-                        {
-                            Id = u.Id,
-                            Username = u.Username,
-                            Email = u.Email
-                        }).ToList();
-        }
+        public IEnumerable<UserDto> GetAll() =>
+            _repo.GetAll().Select(u => new UserDto { Id = u.Id, Username = u.Username, Email = u.Email });
     }
 }

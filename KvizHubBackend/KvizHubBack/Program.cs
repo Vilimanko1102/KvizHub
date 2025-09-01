@@ -1,4 +1,6 @@
 using KvizHubBack.Data;
+using KvizHubBack.Repositories;
+using KvizHubBack.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,9 @@ builder.Services.AddSwaggerGen();
 // Dodaj DbContext sa Oracle konekcijom
 builder.Services.AddDbContext<KvizHubContext>(options =>
     options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
