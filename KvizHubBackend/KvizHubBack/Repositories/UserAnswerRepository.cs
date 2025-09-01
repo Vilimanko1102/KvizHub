@@ -36,10 +36,11 @@ namespace KvizHubBack.Repositories
 
         public UserAnswer? GetById(int id)
         {
-            return _context.UserAnswers
-                .Include(ua => ua.Question)
-                .Include(ua => ua.QuizAttempt)
-                .FirstOrDefault(ua => ua.Id == id);
+            var userAnswers = _context.UserAnswers
+                .FromSqlRaw(@"SELECT * FROM ""UserAnswers"" WHERE ""Id"" = :id AND ROWNUM = 1",
+                    new OracleParameter("id", id))
+                .AsEnumerable();
+            return userAnswers.FirstOrDefault();
         }
 
         public IEnumerable<UserAnswer> GetByQuizAttempt(int quizAttemptId)

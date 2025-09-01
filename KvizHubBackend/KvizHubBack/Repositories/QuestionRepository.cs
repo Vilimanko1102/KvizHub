@@ -1,6 +1,7 @@
 ﻿using KvizHubBack.Data;
 using KvizHubBack.Models;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,9 +36,11 @@ namespace KvizHubBack.Repositories
 
         public Question? GetById(int id)
         {
-            return _context.Questions
-                .Include(q => q.Answers)
-                .FirstOrDefault(q => q.Id == id);
+            var questions = _context.Questions
+                .FromSqlRaw(@"SELECT * FROM ""Questions"" WHERE ""Id"" = :id AND ROWNUM = 1",
+                    new OracleParameter("id", id))
+                .AsEnumerable();
+            return questions.FirstOrDefault();
         }
 
         public IEnumerable<Question> GetAll()
