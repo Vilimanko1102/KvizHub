@@ -16,8 +16,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<KvizHubContext>(options =>
     options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizService, QuizService>();
 
 var app = builder.Build();
 
