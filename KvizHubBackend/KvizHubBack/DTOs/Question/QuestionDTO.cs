@@ -1,6 +1,4 @@
-﻿namespace KvizHubBack.DTOs
-{
-    namespace KvizHubBack.DTOs.Question
+﻿    namespace KvizHubBack.DTOs.Question
     {
         public class QuestionDto
         {
@@ -10,4 +8,3 @@
         }
     }
 
-}
