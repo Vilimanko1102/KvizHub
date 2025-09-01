@@ -11,8 +11,8 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace KvizHubBack.Migrations
 {
     [DbContext(typeof(KvizHubContext))]
-    [Migration("20250831180156_InitialCreation")]
-    partial class InitialCreation
+    [Migration("20250901035940_AddSequencesAndTriggers")]
+    partial class AddSequencesAndTriggers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,17 +26,14 @@ namespace KvizHubBack.Migrations
 
             modelBuilder.Entity("KvizHubBack.Models.Answer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<decimal>("Id")
+                        .HasColumnType("NUMBER");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<decimal>("IsCorrect")
+                        .HasColumnType("NUMBER");
 
-                    b.Property<bool>("IsCorrect")
-                        .HasColumnType("BOOLEAN");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<decimal>("QuestionId")
+                        .HasColumnType("NUMBER");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -51,14 +48,11 @@ namespace KvizHubBack.Migrations
 
             modelBuilder.Entity("KvizHubBack.Models.Question", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<decimal>("Id")
+                        .HasColumnType("NUMBER");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("QuizId")
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<decimal>("QuizId")
+                        .HasColumnType("NUMBER");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -73,11 +67,8 @@ namespace KvizHubBack.Migrations
 
             modelBuilder.Entity("KvizHubBack.Models.Quiz", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<decimal>("Id")
+                        .HasColumnType("NUMBER");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -90,11 +81,8 @@ namespace KvizHubBack.Migrations
 
             modelBuilder.Entity("KvizHubBack.Models.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<decimal>("Id")
+                        .HasColumnType("NUMBER");
 
                     b.Property<string>("Email")
                         .IsRequired()

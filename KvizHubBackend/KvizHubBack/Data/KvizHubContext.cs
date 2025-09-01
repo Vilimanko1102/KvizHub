@@ -16,21 +16,65 @@ namespace KvizHubBack.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Quiz>()
-                .Property(q => q.Id)
-                .UseIdentityColumn();  
 
-            modelBuilder.Entity<Question>()
-                .Property(q => q.Id)
-                .UseIdentityColumn();
+            // --- USERS ---
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("Users");
+                entity.HasKey(u => u.Id);
+                entity.Property(u => u.Id)
+                .HasColumnName("Id")
+                      .HasColumnType("NUMBER")
+                      .ValueGeneratedOnAdd(); // ne koristimo IDENTITY
+            });
 
-            modelBuilder.Entity<Answer>()
-                .Property(a => a.Id)
-                .UseIdentityColumn();
+            // --- QUIZZES ---
+            modelBuilder.Entity<Quiz>(entity =>
+            {
+                entity.ToTable("Quizzes");
+                entity.HasKey(q => q.Id);
+                entity.Property(q => q.Id)
+                .HasColumnName("Id")
+                      .HasColumnType("NUMBER")
+                      .ValueGeneratedOnAdd();
+            });
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.Id)
-                .UseIdentityColumn();
+            // --- QUESTIONS ---
+            modelBuilder.Entity<Question>(entity =>
+            {
+                entity.ToTable("Questions");
+                entity.HasKey(q => q.Id);
+                entity.Property(q => q.Id)
+                .HasColumnName("Id")
+                      .HasColumnType("NUMBER")
+                      .ValueGeneratedOnAdd();
+
+                entity.HasOne(q => q.Quiz)
+                      .WithMany(qz => qz.Questions)
+                      .HasForeignKey(q => q.QuizId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // --- ANSWERS ---
+            modelBuilder.Entity<Answer>(entity =>
+            {
+                entity.ToTable("Answers");
+                entity.HasKey(a => a.Id);
+                entity.Property(a => a.Id)
+                .HasColumnName("Id")
+                      .HasColumnType("NUMBER")
+                      .ValueGeneratedOnAdd();
+
+                entity.Property(a => a.IsCorrect)
+                      .HasColumnType("NUMBER") // 0/1 umesto BOOLEAN
+                      .IsRequired();
+
+                entity.HasOne(a => a.Question)
+                      .WithMany(q => q.Answers)
+                      .HasForeignKey(a => a.QuestionId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
         }
     }
 }

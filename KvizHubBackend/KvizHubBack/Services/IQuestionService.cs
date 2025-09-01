@@ -1,5 +1,4 @@
-﻿using KvizHubBack.DTOs.KvizHubBack.DTOs.Question;
-using KvizHubBack.DTOs.Question;
+﻿using KvizHubBack.DTOs.Question;
 
 namespace KvizHubBack.Services
 {

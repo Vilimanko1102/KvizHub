@@ -1,5 +1,7 @@
 ﻿using KvizHubBack.Data;
 using KvizHubBack.Models;
+using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 
 namespace KvizHubBack.Repositories
 {
@@ -12,7 +14,19 @@ namespace KvizHubBack.Repositories
             _context = context;
         }
 
-        public Answer GetById(int id) => _context.Answers.FirstOrDefault(a => a.Id == id);
+        public Answer GetById(int id)
+        {
+            var answers = _context.Answers
+                            .FromSqlRaw(@"SELECT * FROM ""Answers"" WHERE ""Id"" = :id AND ROWNUM = 1",
+                                new OracleParameter("id", id))
+                            .AsEnumerable();   // materializes the query without EF appending FETCH
+
+            var answer = answers.FirstOrDefault();
+
+            return answer;
+
+        }
+
 
         public IEnumerable<Answer> GetAll() => _context.Answers.ToList();
 
