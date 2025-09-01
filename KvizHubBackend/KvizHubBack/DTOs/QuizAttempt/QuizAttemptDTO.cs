@@ -1,4 +1,6 @@
-﻿namespace KvizHubBack.DTOs.QuizAttempt
+﻿using KvizHubBack.DTOs.UserAnswer;
+
+namespace KvizHubBack.DTOs.QuizAttempt
 {
     public class QuizAttemptDto
     {

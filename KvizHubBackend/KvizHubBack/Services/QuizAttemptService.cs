@@ -1,4 +1,5 @@
 ﻿using KvizHubBack.DTOs.QuizAttempt;
+using KvizHubBack.DTOs.UserAnswer;
 using KvizHubBack.Models;
 using KvizHubBack.Repositories;
 using System.Collections.Generic;

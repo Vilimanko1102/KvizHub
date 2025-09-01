@@ -20,7 +20,7 @@ namespace KvizHubBack.Migrations
                 END;
             ");
 
-            // Quiz
+            // Quizzes
             migrationBuilder.Sql(@"CREATE SEQUENCE QUIZZES_SEQ START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE");
             migrationBuilder.Sql(@"
                 CREATE OR REPLACE TRIGGER QUIZZES_TRG
@@ -32,7 +32,7 @@ namespace KvizHubBack.Migrations
                 END;
             ");
 
-            // Question
+            // Questions
             migrationBuilder.Sql(@"CREATE SEQUENCE QUESTIONS_SEQ START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE");
             migrationBuilder.Sql(@"
                 CREATE OR REPLACE TRIGGER QUESTIONS_TRG
@@ -44,7 +44,7 @@ namespace KvizHubBack.Migrations
                 END;
             ");
 
-            // Answer
+            // Answers
             migrationBuilder.Sql(@"CREATE SEQUENCE ANSWERS_SEQ START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE");
             migrationBuilder.Sql(@"
                 CREATE OR REPLACE TRIGGER ANSWERS_TRG
@@ -55,6 +55,9 @@ namespace KvizHubBack.Migrations
                     SELECT ANSWERS_SEQ.NEXTVAL INTO :NEW.""Id"" FROM dual;
                 END;
             ");
+
+            // QuizAttempts
+            
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -70,6 +73,8 @@ namespace KvizHubBack.Migrations
 
             migrationBuilder.Sql(@"DROP TRIGGER ANSWERS_TRG");
             migrationBuilder.Sql(@"DROP SEQUENCE ANSWERS_SEQ");
+
+            
         }
     }
 }
