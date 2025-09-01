@@ -1,11 +1,13 @@
 ﻿using KvizHubBack.DTOs.Answer;
 using KvizHubBack.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace KvizHubBack.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class AnswerController : ControllerBase
     {
         private readonly IAnswerService _service;
@@ -15,59 +17,59 @@ namespace KvizHubBack.Controllers
             _service = service;
         }
 
-        [HttpPost]
-        public IActionResult CreateAnswer([FromBody] AnswerCreateDto dto)
-        {
-            var answer = _service.CreateAnswer(dto);
-            return Ok(answer);
-        }
-
-        [HttpGet]
-        public IActionResult GetAllAnswers()
-        {
-            var answers = _service.GetAllAnswers();
-            return Ok(answers);
-        }
-
         [HttpGet("{id}")]
-        public IActionResult GetAnswerById(int id)
+        public ActionResult<AnswerDto> GetById(int id)
         {
             try
             {
-                var answer = _service.GetAnswerById(id);
-                return Ok(answer);
+                return Ok(_service.GetById(id));
             }
-            catch (KeyNotFoundException)
+            catch (System.Exception e)
             {
-                return NotFound();
+                return NotFound(e.Message);
             }
         }
 
+        [HttpGet("question/{questionId}")]
+        public ActionResult<IEnumerable<AnswerDto>> GetByQuestionId(int questionId)
+        {
+            return Ok(_service.GetByQuestionId(questionId));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public ActionResult<AnswerDto> Create([FromBody] AnswerCreateDto dto)
+        {
+            var answer = _service.Create(dto);
+            return CreatedAtAction(nameof(GetById), new { id = answer.Id }, answer);
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public IActionResult UpdateAnswer(int id, [FromBody] AnswerUpdateDto dto)
+        public ActionResult<AnswerDto> Update(int id, [FromBody] AnswerUpdateDto dto)
         {
             try
             {
-                var answer = _service.UpdateAnswer(id, dto);
-                return Ok(answer);
+                return Ok(_service.Update(id, dto));
             }
-            catch (KeyNotFoundException)
+            catch (System.Exception e)
             {
-                return NotFound();
+                return BadRequest(e.Message);
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public IActionResult DeleteAnswer(int id)
+        public IActionResult Delete(int id)
         {
             try
             {
-                _service.DeleteAnswer(id);
+                _service.Delete(id);
                 return NoContent();
             }
-            catch (KeyNotFoundException)
+            catch (System.Exception e)
             {
-                return NotFound();
+                return NotFound(e.Message);
             }
         }
     }

@@ -17,5 +17,6 @@
 
         public Quiz? Quiz { get; set; }
         public ICollection<Answer>? Answers { get; set; }
+        public ICollection<UserAnswer>? UserAnswers { get; set; }
     }
 }

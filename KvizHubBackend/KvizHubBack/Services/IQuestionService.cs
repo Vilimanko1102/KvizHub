@@ -4,10 +4,11 @@ namespace KvizHubBack.Services
 {
     public interface IQuestionService
     {
-        QuestionDto CreateQuestion(QuestionCreateDto dto);
-        IEnumerable<QuestionDto> GetAllQuestions();
-        QuestionDto GetQuestionById(int id);
-        QuestionDto UpdateQuestion(int id, QuestionUpdateDto dto);
-        void DeleteQuestion(int id);
+        QuestionDto Create(QuestionCreateDto dto);
+        QuestionDto Update(int id, QuestionUpdateDto dto);
+        void Delete(int id);
+        QuestionDto GetById(int id);
+        IEnumerable<QuestionDto> GetAll();
+        IEnumerable<QuestionDto> GetByQuizId(int quizId);
     }
 }

@@ -1,6 +1,9 @@
 ﻿using KvizHubBack.DTOs.Question;
 using KvizHubBack.Models;
 using KvizHubBack.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KvizHubBack.Services
 {
@@ -13,59 +16,76 @@ namespace KvizHubBack.Services
             _repo = repo;
         }
 
-        public QuestionDto CreateQuestion(QuestionCreateDto dto)
+        public QuestionDto Create(QuestionCreateDto dto)
         {
+            if (!Enum.TryParse<QuestionType>(dto.Type, true, out var type))
+                throw new Exception("Invalid question type");
+
             var question = new Question
             {
+                QuizId = dto.QuizId,
                 Text = dto.Text,
-                QuizId = dto.QuizId
+                Type = type,
+                Points = dto.Points
             };
 
             _repo.Add(question);
+            return MapToDto(question);
+        }
 
+        public QuestionDto Update(int id, QuestionUpdateDto dto)
+        {
+            var question = _repo.GetById(id) ?? throw new Exception("Question not found");
+
+            if (!string.IsNullOrEmpty(dto.Text))
+                question.Text = dto.Text;
+
+            if (!string.IsNullOrEmpty(dto.Type))
+            {
+                if (!Enum.TryParse<QuestionType>(dto.Type, true, out var type))
+                    throw new Exception("Invalid question type");
+                question.Type = type;
+            }
+
+            if (dto.Points.HasValue)
+                question.Points = dto.Points.Value;
+
+            _repo.Update(question);
+            return MapToDto(question);
+        }
+
+        public void Delete(int id)
+        {
+            var question = _repo.GetById(id) ?? throw new Exception("Question not found");
+            _repo.Delete(question);
+        }
+
+        public QuestionDto GetById(int id)
+        {
+            var question = _repo.GetById(id) ?? throw new Exception("Question not found");
+            return MapToDto(question);
+        }
+
+        public IEnumerable<QuestionDto> GetAll()
+        {
+            return _repo.GetAll().Select(MapToDto);
+        }
+
+        public IEnumerable<QuestionDto> GetByQuizId(int quizId)
+        {
+            return _repo.GetByQuizId(quizId).Select(MapToDto);
+        }
+
+        private QuestionDto MapToDto(Question q)
+        {
             return new QuestionDto
             {
-                Id = question.Id,
-                Text = question.Text,
-                QuizId = question.QuizId
-            };
-        }
-
-        public IEnumerable<QuestionDto> GetAllQuestions()
-        {
-            return _repo.GetAll().Select(q => new QuestionDto
-            {
                 Id = q.Id,
+                QuizId = q.QuizId,
                 Text = q.Text,
-                QuizId = q.QuizId
-            });
-        }
-
-        public QuestionDto GetQuestionById(int id)
-        {
-            var q = _repo.GetById(id);
-            if (q == null) throw new KeyNotFoundException();
-            return new QuestionDto { Id = q.Id, Text = q.Text, QuizId = q.QuizId };
-        }
-
-        public QuestionDto UpdateQuestion(int id, QuestionUpdateDto dto)
-        {
-            var q = _repo.GetById(id);
-            if (q == null) throw new KeyNotFoundException();
-
-            q.Text = dto.Text;
-            q.QuizId = dto.QuizId;
-
-            _repo.Update(q);
-
-            return new QuestionDto { Id = q.Id, Text = q.Text, QuizId = q.QuizId };
-        }
-
-        public void DeleteQuestion(int id)
-        {
-            var q = _repo.GetById(id);
-            if (q == null) throw new KeyNotFoundException();
-            _repo.Delete(q);
+                Type = q.Type.ToString(),
+                Points = q.Points
+            };
         }
     }
 }

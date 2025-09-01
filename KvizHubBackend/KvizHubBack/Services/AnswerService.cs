@@ -1,6 +1,8 @@
 ﻿using KvizHubBack.DTOs.Answer;
 using KvizHubBack.Models;
 using KvizHubBack.Repositories;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KvizHubBack.Services
 {
@@ -13,13 +15,13 @@ namespace KvizHubBack.Services
             _repo = repo;
         }
 
-        public AnswerDto CreateAnswer(AnswerCreateDto dto)
+        public AnswerDto Create(AnswerCreateDto dto)
         {
             var answer = new Answer
             {
+                QuestionId = dto.QuestionId,
                 Text = dto.Text,
-                IsCorrect = dto.IsCorrect,
-                QuestionId = dto.QuestionId
+                IsCorrect = dto.IsCorrect
             };
 
             _repo.Add(answer);
@@ -27,49 +29,61 @@ namespace KvizHubBack.Services
             return new AnswerDto
             {
                 Id = answer.Id,
+                QuestionId = answer.QuestionId,
                 Text = answer.Text,
-                IsCorrect = answer.IsCorrect,
-                QuestionId = answer.QuestionId
+                IsCorrect = answer.IsCorrect
             };
         }
 
-        public IEnumerable<AnswerDto> GetAllAnswers()
+        public AnswerDto Update(int id, AnswerUpdateDto dto)
         {
-            return _repo.GetAll().Select(a => new AnswerDto
+            var answer = _repo.GetById(id) ?? throw new System.Exception("Answer not found");
+
+            if (!string.IsNullOrEmpty(dto.Text))
+                answer.Text = dto.Text;
+
+            if (dto.IsCorrect.HasValue)
+                answer.IsCorrect = dto.IsCorrect.Value;
+
+            _repo.Update(answer);
+
+            return new AnswerDto
             {
-                Id = a.Id,
-                Text = a.Text,
-                IsCorrect = a.IsCorrect,
-                QuestionId = a.QuestionId
-            });
+                Id = answer.Id,
+                QuestionId = answer.QuestionId,
+                Text = answer.Text,
+                IsCorrect = answer.IsCorrect
+            };
         }
 
-        public AnswerDto GetAnswerById(int id)
+        public void Delete(int id)
         {
-            var a = _repo.GetById(id);
-            if (a == null) throw new KeyNotFoundException();
-            return new AnswerDto { Id = a.Id, Text = a.Text, IsCorrect = a.IsCorrect, QuestionId = a.QuestionId };
+            var answer = _repo.GetById(id) ?? throw new System.Exception("Answer not found");
+            _repo.Delete(answer);
         }
 
-        public AnswerDto UpdateAnswer(int id, AnswerUpdateDto dto)
+        public AnswerDto GetById(int id)
         {
-            var a = _repo.GetById(id);
-            if (a == null) throw new KeyNotFoundException();
-
-            a.Text = dto.Text;
-            a.IsCorrect = dto.IsCorrect;
-            a.QuestionId = dto.QuestionId;
-
-            _repo.Update(a);
-
-            return new AnswerDto { Id = a.Id, Text = a.Text, IsCorrect = a.IsCorrect, QuestionId = a.QuestionId };
+            var answer = _repo.GetById(id) ?? throw new System.Exception("Answer not found");
+            return new AnswerDto
+            {
+                Id = answer.Id,
+                QuestionId = answer.QuestionId,
+                Text = answer.Text,
+                IsCorrect = answer.IsCorrect
+            };
         }
 
-        public void DeleteAnswer(int id)
+        public IEnumerable<AnswerDto> GetByQuestionId(int questionId)
         {
-            var a = _repo.GetById(id);
-            if (a == null) throw new KeyNotFoundException();
-            _repo.Delete(a);
+            return _repo.GetByQuestionId(questionId)
+                .Select(a => new AnswerDto
+                {
+                    Id = a.Id,
+                    QuestionId = a.QuestionId,
+                    Text = a.Text,
+                    IsCorrect = a.IsCorrect
+                });
         }
     }
 }

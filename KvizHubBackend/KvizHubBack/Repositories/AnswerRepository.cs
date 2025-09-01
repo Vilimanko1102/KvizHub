@@ -2,6 +2,8 @@
 using KvizHubBack.Models;
 using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KvizHubBack.Repositories
 {
@@ -13,22 +15,6 @@ namespace KvizHubBack.Repositories
         {
             _context = context;
         }
-
-        public Answer GetById(int id)
-        {
-            var answers = _context.Answers
-                            .FromSqlRaw(@"SELECT * FROM ""Answers"" WHERE ""Id"" = :id AND ROWNUM = 1",
-                                new OracleParameter("id", id))
-                            .AsEnumerable();   // materializes the query without EF appending FETCH
-
-            var answer = answers.FirstOrDefault();
-
-            return answer;
-
-        }
-
-
-        public IEnumerable<Answer> GetAll() => _context.Answers.ToList();
 
         public void Add(Answer answer)
         {
@@ -46,6 +32,22 @@ namespace KvizHubBack.Repositories
         {
             _context.Answers.Remove(answer);
             _context.SaveChanges();
+        }
+
+        public Answer? GetById(int id)
+        {
+            var answers = _context.Answers
+                .FromSqlRaw(@"SELECT * FROM ""Answers"" WHERE ""Id"" = :id AND ROWNUM = 1",
+                    new OracleParameter("id", id))
+                .AsEnumerable();
+            return answers.FirstOrDefault();
+        }
+
+        public IEnumerable<Answer> GetByQuestionId(int questionId)
+        {
+            return _context.Answers
+                .Where(a => a.QuestionId == questionId)
+                .ToList();
         }
     }
 }
