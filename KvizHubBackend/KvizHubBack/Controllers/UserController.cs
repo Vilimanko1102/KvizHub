@@ -1,37 +1,155 @@
 ﻿using KvizHubBack.DTOs.User;
 using KvizHubBack.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace KvizHubBack.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _service;
-        public UserController(IUserService service) => _service = service;
 
+        public UsersController(IUserService service)
+        {
+            _service = service;
+        }
+
+        // ========================
+        // Registracija korisnika
+        // POST: api/users/register
+        // ========================
         [HttpPost("register")]
-        public IActionResult Register(UserRegisterDto dto)
+        public ActionResult<UserDto> Register([FromBody] UserRegisterDto dto)
         {
-            var result = _service.Register(dto);
-            return Ok(result);
+            try
+            {
+                var user = _service.Register(dto);
+                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
+        // ========================
+        // Login korisnika
+        // POST: api/users/login
+        // ========================
         [HttpPost("login")]
-        public IActionResult Login(UserLoginDto dto)
+        public ActionResult<UserDto> Login([FromBody] UserLoginDto dto)
         {
-            var result = _service.Login(dto);
-            return Ok(result);
+            try
+            {
+                var user = _service.Login(dto);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
 
+        // ========================
+        // Dohvatanje korisnika po ID
+        // GET: api/users/{id}
+        // ========================
+        [HttpGet("{id}")]
+        public ActionResult<UserDto> GetById(int id)
+        {
+            try
+            {
+                var user = _service.GetById(id);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        // ========================
+        // Dohvatanje korisnika po username
+        // GET: api/users/by-username/{username}
+        // ========================
+        [HttpGet("by-username/{username}")]
+        public ActionResult<UserDto> GetByUsername(string username)
+        {
+            try
+            {
+                var user = _service.GetByUsername(username);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        // ========================
+        // Dohvatanje svih korisnika
+        // GET: api/users
+        // ========================
         [HttpGet]
-        public IActionResult GetAll()
+        public ActionResult<IEnumerable<UserDto>> GetAll()
         {
             var users = _service.GetAll();
             return Ok(users);
         }
-    }
 
+        // ========================
+        // Update korisnika
+        // PUT: api/users/{id}
+        // ========================
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, [FromBody] UserUpdateDto dto)
+        {
+            try
+            {
+                _service.Update(id, dto);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // ========================
+        // Brisanje korisnika
+        // DELETE: api/users/{id}
+        // ========================
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            try
+            {
+                _service.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        // ========================
+        // Dohvatanje istorije kvizova korisnika
+        // GET: api/users/{id}/quiz-history
+        // ========================
+        [HttpGet("{id}/quiz-history")]
+        public ActionResult<IEnumerable<UserQuizResultDto>> GetUserQuizHistory(int id)
+        {
+            try
+            {
+                var history = _service.GetUserQuizHistory(id);
+                return Ok(history);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+    }
 }
