@@ -1,6 +1,7 @@
 ﻿using KvizHubBack.Data;
 using KvizHubBack.Models;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 
 namespace KvizHubBack.Repositories
 {
@@ -33,12 +34,24 @@ namespace KvizHubBack.Repositories
 
         public User GetById(int id)
         {
-            return _context.Users.Find(id)!;
+            var users = _context.Users
+                .FromSqlRaw(
+                    @"SELECT * FROM ""Users"" WHERE ""Id"" = :id AND ROWNUM = 1",
+                    new OracleParameter("id", id))
+                .AsEnumerable();
+
+            return users.FirstOrDefault()!;
         }
 
         public User GetByUsername(string username)
         {
-            return _context.Users.FirstOrDefault(u => u.Username == username)!;
+            var users = _context.Users
+                .FromSqlRaw(
+                    @"SELECT * FROM ""Users"" WHERE ""Username"" = :username AND ROWNUM = 1",
+                    new OracleParameter("username", username))
+                .AsEnumerable();
+
+            return users.FirstOrDefault()!;
         }
 
         public IEnumerable<User> GetAll()
