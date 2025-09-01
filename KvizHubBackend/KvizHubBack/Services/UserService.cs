@@ -1,25 +1,54 @@
-﻿using KvizHubBack.DTOs.User;
+﻿using BCrypt.Net;
+using KvizHubBack.DTOs.User;
 using KvizHubBack.Models;
 using KvizHubBack.Repositories;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using BCrypt.Net;
+using System.Security.Claims;
+using System.Text;
 
 namespace KvizHubBack.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _repo;
+        private readonly IConfiguration _configuration;
 
-        public UserService(IUserRepository repo)
+        public UserService(IUserRepository repo, IConfiguration configuration)
         {
             _repo = repo;
+            _configuration = configuration;
+        }
+
+        public string GenerateJwtToken(User user)
+        {
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+                new Claim("Admin", user.Role.ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(int.Parse(_configuration["Jwt:ExpireMinutes"])),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         // ========================
         // Registracija korisnika
         // ========================
-        public UserDto Register(UserRegisterDto dto)
+        public UserAuthResponseDto Register(UserRegisterDto dto)
         {
             if (_repo.GetByUsername(dto.Username) != null)
                 throw new Exception("Username already exists");
@@ -37,32 +66,45 @@ namespace KvizHubBack.Services
 
             _repo.Add(user);
 
-            return new UserDto
+            // Vraćamo UserAuthResponseDto
+            return new UserAuthResponseDto
             {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email,
-                AvatarUrl = user.AvatarUrl
+                User = new UserDto
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    Email = user.Email,
+                    AvatarUrl = user.AvatarUrl
+                },
+                Token = GenerateJwtToken(user),
+                Expiration = DateTime.UtcNow.AddMinutes(int.Parse(_configuration["Jwt:ExpireMinutes"]))
             };
         }
 
         // ========================
         // Login korisnika
         // ========================
-        public UserDto Login(UserLoginDto dto)
+        public UserAuthResponseDto Login(UserLoginDto dto)
         {
             var user = _repo.GetByUsernameOrEmail(dto.UsernameOrEmail);
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 throw new Exception("Invalid username or password");
 
-            return new UserDto
+            // Vraćamo UserAuthResponseDto
+            return new UserAuthResponseDto
             {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email,
-                AvatarUrl = user.AvatarUrl
+                User = new UserDto
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    Email = user.Email,
+                    AvatarUrl = user.AvatarUrl
+                },
+                Token = GenerateJwtToken(user),
+                Expiration = DateTime.UtcNow.AddMinutes(int.Parse(_configuration["Jwt:ExpireMinutes"]))
             };
         }
+
 
         // ========================
         // Dohvatanje korisnika po ID
