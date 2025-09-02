@@ -3,5 +3,6 @@ export interface User {
     username: string;
     email: string;
     avatarUrl?: string;
-    isAdmin?: boolean;
+    role?: number;
+    createdAt?: string;
 }

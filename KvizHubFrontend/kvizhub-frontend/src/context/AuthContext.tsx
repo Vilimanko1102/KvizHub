@@ -7,6 +7,7 @@ interface User {
     email: string;
     avatarUrl?: string;
     isAdmin?: boolean;
+    role?: string;
 }
 
 interface AuthContextType {
@@ -30,12 +31,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (usernameOrEmail: string, password: string) => {
         const response = await loginUser({usernameOrEmail, password});
+        console.log(response)
+        localStorage.setItem("userRole", response.user.role);
         localStorage.setItem("token", response.token);
         setUser(response.user);
     };
 
     const register = async (data: { username: string; email: string; password: string; avatarUrl?: string }) => {
         const response = await registerUser(data);
+        localStorage.setItem("userRole", response.user.role);
         localStorage.setItem("token", response.token);
         setUser(response.user);
     };

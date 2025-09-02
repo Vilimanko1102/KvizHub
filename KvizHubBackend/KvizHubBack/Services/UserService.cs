@@ -99,7 +99,8 @@ namespace KvizHubBack.Services
                     Id = user.Id,
                     Username = user.Username,
                     Email = user.Email,
-                    AvatarUrl = user.AvatarUrl
+                    AvatarUrl = user.AvatarUrl,
+                    Role = user.Role.ToString()
                 },
                 Token = GenerateJwtToken(user),
                 Expiration = DateTime.UtcNow.AddMinutes(int.Parse(_configuration["Jwt:ExpireMinutes"]))
@@ -119,7 +120,8 @@ namespace KvizHubBack.Services
                 Id = user.Id,
                 Username = user.Username,
                 Email = user.Email,
-                AvatarUrl = user.AvatarUrl
+                AvatarUrl = user.AvatarUrl,
+                Role = user.Role.ToString(),
             };
         }
 

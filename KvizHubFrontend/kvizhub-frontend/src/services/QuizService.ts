@@ -1,31 +1,38 @@
 import axios from "axios";
 
-// Tipovi (možeš kasnije prebaciti u poseban fajl npr. models/Quiz.ts)
 export interface Quiz {
   id: number;
   title: string;
   description: string;
-  difficulty: "EASY" | "MEDIUM" | "HARD";
-  createdAt: string;
+  category: string;
+  difficulty: string;
+  timeLimit: number;      // in minutes
+  questionCount: number;
 }
 
+// Za kreiranje kviza (bez id i questionCount jer se generišu na backendu)
 export interface QuizCreateDto {
   title: string;
   description: string;
-  difficulty: "EASY" | "MEDIUM" | "HARD";
+  category: string;
+  difficulty: string;
+  timeLimit: number;
 }
 
+// Za update kviza (sva polja opciona)
 export interface QuizUpdateDto {
   title?: string;
   description?: string;
-  difficulty?: "EASY" | "MEDIUM" | "HARD";
+  category?: string;
+  difficulty?: string;
+  timeLimit?: number;
 }
 
-const API_URL = "http://localhost:5000/api/quizzes"; // prilagodi ako ti je bek na drugom portu ili ruti
+const API_URL = process.env.REACT_APP_API_URL_QUIZ; // prilagodi ako ti je bek na drugom portu ili ruti
 
 class QuizService {
   async getAllQuizzes(): Promise<Quiz[]> {
-    const response = await axios.get(API_URL);
+    const response = await axios.get(`${API_URL}`);
     return response.data;
   }
 
@@ -35,7 +42,7 @@ class QuizService {
   }
 
   async createQuiz(quizData: QuizCreateDto, token: string): Promise<Quiz> {
-    const response = await axios.post(API_URL, quizData, {
+    const response = await axios.post(`${API_URL}`, quizData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

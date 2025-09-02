@@ -12,11 +12,13 @@ export default function QuizListPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const isAdmin = user?.isAdmin ?? false;
+  const isAdmin = localStorage["userRole"] === "Admin";
 
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
+        console.log(localStorage["userRole"])
+        console.log(isAdmin)
         const data = await QuizService.getAllQuizzes();
         setQuizzes(data);
       } catch (error) {

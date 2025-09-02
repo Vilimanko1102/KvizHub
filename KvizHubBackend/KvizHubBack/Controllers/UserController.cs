@@ -1,4 +1,5 @@
 ﻿using KvizHubBack.DTOs.User;
+using KvizHubBack.Models;
 using KvizHubBack.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace KvizHubBack.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _service;
+        private UserDto loggedUser;
 
         public UsersController(IUserService service)
         {
@@ -21,6 +23,7 @@ namespace KvizHubBack.Controllers
             try
             {
                 var authResponse = _service.Register(dto);
+                loggedUser = authResponse.User;
                 return Created(string.Empty, authResponse);
             }
             catch (Exception ex)
@@ -39,6 +42,7 @@ namespace KvizHubBack.Controllers
             try
             {
                 var authResponse = _service.Login(dto);
+                loggedUser = authResponse.User;
                 return Ok(authResponse);
             }
             catch (Exception ex)
@@ -51,13 +55,12 @@ namespace KvizHubBack.Controllers
         // Dohvatanje korisnika po ID
         // GET: api/users/{id}
         // ========================
-        [HttpGet("{id}")]
-        public ActionResult<UserDto> GetById(int id)
+        [HttpGet("me")]
+        public ActionResult<UserDto> GetLoggedUser()
         {
             try
             {
-                var user = _service.GetById(id);
-                return Ok(user);
+                return Ok(loggedUser);
             }
             catch (Exception ex)
             {
