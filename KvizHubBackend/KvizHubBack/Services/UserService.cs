@@ -61,6 +61,7 @@ namespace KvizHubBack.Services
                 Username = dto.Username,
                 Email = dto.Email,
                 AvatarUrl = dto.AvatarUrl,
+                CreatedAt = DateTime.Now,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
             };
 

@@ -18,6 +18,7 @@ namespace KvizHubBack.Migrations
                     Username = table.Column<string>(maxLength: 2000, nullable: false),
                     PasswordHash = table.Column<string>(maxLength: 2000, nullable: false),
                     Email = table.Column<string>(maxLength: 2000, nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
                     AvatarUrl = table.Column<string>(maxLength: 2000, nullable: true)
                 },
                 constraints: table =>

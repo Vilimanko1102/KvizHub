@@ -4,8 +4,8 @@ namespace KvizHubBack.Services
 {
     public interface IUserService
     {
-        UserDto Register(UserRegisterDto dto);
-        UserDto Login(UserLoginDto dto);
+        UserAuthResponseDto Register(UserRegisterDto dto);
+        UserAuthResponseDto Login(UserLoginDto dto);
         UserDto GetById(int id);
         UserDto GetByUsername(string username);
         IEnumerable<UserDto> GetAll();

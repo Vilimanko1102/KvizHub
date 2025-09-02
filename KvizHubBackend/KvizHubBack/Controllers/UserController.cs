@@ -15,17 +15,13 @@ namespace KvizHubBack.Controllers
             _service = service;
         }
 
-        // ========================
-        // Registracija korisnika
-        // POST: api/users/register
-        // ========================
         [HttpPost("register")]
-        public ActionResult<UserDto> Register([FromBody] UserRegisterDto dto)
+        public ActionResult<UserAuthResponseDto> Register([FromBody] UserRegisterDto dto)
         {
             try
             {
-                var user = _service.Register(dto);
-                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+                var authResponse = _service.Register(dto);
+                return Created(string.Empty, authResponse);
             }
             catch (Exception ex)
             {
@@ -38,12 +34,12 @@ namespace KvizHubBack.Controllers
         // POST: api/users/login
         // ========================
         [HttpPost("login")]
-        public ActionResult<UserDto> Login([FromBody] UserLoginDto dto)
+        public ActionResult<UserAuthResponseDto> Login([FromBody] UserLoginDto dto)
         {
             try
             {
-                var user = _service.Login(dto);
-                return Ok(user);
+                var authResponse = _service.Login(dto);
+                return Ok(authResponse);
             }
             catch (Exception ex)
             {
