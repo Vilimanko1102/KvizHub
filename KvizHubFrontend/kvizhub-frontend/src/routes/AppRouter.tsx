@@ -41,7 +41,7 @@ const AppRouter = () => {
                     path="/admin/*"
                     element={<AdminRoute><AdminDashboardPage /></AdminRoute>}
                 />
-                <Route path="*" element={<Navigate to="/login" />} />
+                <Route path="*" element={<Navigate to="/register" />} />
             </Routes>
         </Router>
     );

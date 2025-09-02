@@ -1,20 +1,56 @@
 import axios from "axios";
+import { AuthResponse } from "../models/AuthResponse";
 
 const API_URL = process.env.REACT_APP_API_URL; // npr. http://localhost:5000
 
-export const loginUser = async (usernameOrEmail: string, password: string) => {
-    const { data } = await axios.post(`${API_URL}/users/login`, { usernameOrEmail, password });
-    return data; // { token, user }
+// ====================
+// Frontend modeli / DTO-i
+// ====================
+export interface LoginDto {
+    usernameOrEmail: string;
+    password: string;
+}
+
+export interface RegisterDto {
+    username: string;
+    email: string;
+    password: string;
+    avatarUrl?: string;
+}
+
+export interface User {
+    id: number;
+    username: string;
+    email: string;
+    avatarUrl?: string;
+    isAdmin?: boolean;
+}
+
+export interface UserAuthResponse {
+    token: string;
+    expiration: string;
+    user: User;
+}
+
+// ====================
+// Auth service
+// ====================
+export const loginUser = async (loginData: LoginDto): Promise<UserAuthResponse> => {
+    const { data } = await axios.post<UserAuthResponse>(`${API_URL}/users/login`, loginData);
+    return data;
 };
 
-export const registerUser = async (userData: { username: string; email: string; password: string; avatarUrl?: string }) => {
-    const { data } = await axios.post(`${API_URL}/users/register`, userData);
-    return data; // { token, user }
+export const registerUser = async (registerData: RegisterDto): Promise<UserAuthResponse> => {
+    const { data } = await axios.post<UserAuthResponse>(`${API_URL}/users/register`, registerData);
+    return data;
 };
 
-export const getCurrentUser = async (token: string) => {
-    const { data } = await axios.get(`${API_URL}/users/me`, {
+export const getCurrentUser = async (token: string): Promise<User> => {
+    const { data } = await axios.get<User>(`${API_URL}/users/me`, {
         headers: { Authorization: `Bearer ${token}` }
     });
-    return data; // User object
+    return data;
 };
+
+const AuthService = { loginUser, registerUser, getCurrentUser };
+export default AuthService;
