@@ -6,6 +6,7 @@ import QuizListPage from '../pages/QuizListPage';
 import QuizPage from '../pages/QuizPage';
 import UserResultsPage from '../pages/UserResultsPage';
 import AdminDashboardPage from '../pages/AdminDashboardPage';
+import LandingPage from '../pages/LandingPage';
 import { useAuth } from '../context/AuthContext';
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
@@ -24,6 +25,7 @@ const AppRouter = () => {
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/landing" element={<LandingPage/>}/>
                 
                 <Route
                     path="/quizzes"
@@ -41,7 +43,7 @@ const AppRouter = () => {
                     path="/admin/*"
                     element={<AdminRoute><AdminDashboardPage /></AdminRoute>}
                 />
-                <Route path="*" element={<Navigate to="/register" />} />
+                <Route path="*" element={<Navigate to="/landing" />} />
             </Routes>
         </Router>
     );
