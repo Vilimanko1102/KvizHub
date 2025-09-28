@@ -1,150 +1,150 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import QuestionService, { QuestionDto } from "../services/QuestionService";
+import { Form, Button, Alert } from "react-bootstrap";
 import AnswerService, { AnswerCreateDto } from "../services/AnswerService";
-import { Button, Form, Alert } from "react-bootstrap";
+import QuestionService, { QuestionDto } from "../services/QuestionService";
 
 const AddAnswerPage: React.FC = () => {
   const { questionId } = useParams<{ questionId: string }>();
   const navigate = useNavigate();
-  const [question, setQuestion] = useState<QuestionDto | null>(null);
 
-  // State za razlicite tipove pitanja
-  const [answers, setAnswers] = useState<{ text: string; isCorrect: boolean }[]>([
-    { text: "", isCorrect: false },
-    { text: "", isCorrect: false },
-    { text: "", isCorrect: false },
-    { text: "", isCorrect: false },
-  ]);
-  const [textAnswer, setTextAnswer] = useState("");
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [question, setQuestion] = useState<QuestionDto | null>(null);
+  const [answers, setAnswers] = useState<{ text: string; isCorrect: boolean }[]>(
+    [
+      { text: "", isCorrect: false },
+      { text: "", isCorrect: false },
+      { text: "", isCorrect: false },
+      { text: "", isCorrect: false },
+    ]
+  );
+  const [fillInAnswer, setFillInAnswer] = useState("");
+  const [trueFalseValue, setTrueFalseValue] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (questionId) {
-      QuestionService.getQuestionById(Number(questionId))
-        .then(setQuestion)
-        .catch(() => setError("Failed to load question"));
-    }
+    if (!questionId) return;
+    QuestionService.getQuestionById(Number(questionId))
+      .then((q) => setQuestion(q))
+      .catch(() => setError("Failed to load question"));
   }, [questionId]);
 
-  const handleAnswerChange = (index: number, field: "text" | "isCorrect", value: any) => {
-    setAnswers((prev) => {
-      const updated = [...prev];
-      if (field === "isCorrect" && question?.type === "SingleChoice") {
-        // Samo jedan tačan odgovor kod SingleChoice
-        updated.forEach((a, i) => (a.isCorrect = i === index));
-      } else {
-        updated[index] = { ...updated[index], [field]: value };
-      }
-      return updated;
-    });
+  const handleAnswerChange = (index: number, field: "text" | "isCorrect", value: string | boolean) => {
+    const newAnswers = [...answers];
+    if (field === "text") newAnswers[index].text = value as string;
+    else newAnswers[index].isCorrect = value as boolean;
+    setAnswers(newAnswers);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!questionId) return;
+    if (!question) return;
 
     try {
-      if (question?.type === "MultipleChoice" || question?.type === "SingleChoice") {
+      if (question.type === "SingleChoice" || question.type === "MultipleChoice") {
         for (const a of answers) {
-          if (!a.text.trim()) continue;
-          const dto: AnswerCreateDto = {
-            questionId: Number(questionId),
+          await AnswerService.createAnswer({
+            questionId: question.id,
             text: a.text,
             isCorrect: a.isCorrect,
-          };
-          await AnswerService.createAnswer(dto);
+          });
         }
-      } else {
-        const dto: AnswerCreateDto = {
-          questionId: Number(questionId),
-          text: textAnswer,
-          isCorrect,
-        };
-        await AnswerService.createAnswer(dto);
+      } else if (question.type === "FillIn") {
+        await AnswerService.createAnswer({
+          questionId: question.id,
+          text: fillInAnswer,
+          isCorrect: true,
+        });
+      } else if (question.type === "TrueFalse") {
+        // Kreiramo dva odgovora u bazi, True i False
+        await AnswerService.createAnswer({
+          questionId: question.id,
+          text: "True",
+          isCorrect: trueFalseValue,
+        });
+        await AnswerService.createAnswer({
+          questionId: question.id,
+          text: "False",
+          isCorrect: !trueFalseValue,
+        });
       }
-      navigate(`/quiz/${question?.quizId}`);
+
+      navigate(`/quiz/${question.quizId}`);
     } catch (err: any) {
-      setError(err.message || "Failed to add answer");
+      console.error(err);
+      setError(err.message || "Failed to save answers");
     }
   };
 
   if (!question) return <p>Loading question...</p>;
 
-  const renderFormFields = () => {
-    switch (question.type) {
-      case "MultipleChoice":
-      case "SingleChoice":
-        return (
+  return (
+    <div className="container mt-4">
+      <h2 className="mb-4">Add Answers for: {question.text}</h2>
+      {error && <Alert variant="danger">{error}</Alert>}
+
+      <Form onSubmit={handleSubmit}>
+        {question.type === "SingleChoice" || question.type === "MultipleChoice" ? (
           <>
-            {answers.map((a, i) => (
-              <div key={i} className="mb-3 border p-2 rounded">
+            {answers.map((a, index) => (
+              <div key={index} className="mb-3 p-2 border rounded">
                 <Form.Group className="mb-2">
-                  <Form.Label>Answer {i + 1}</Form.Label>
+                  <Form.Label>Answer {index + 1}</Form.Label>
                   <Form.Control
                     type="text"
                     value={a.text}
-                    onChange={(e) => handleAnswerChange(i, "text", e.target.value)}
+                    onChange={(e) =>
+                      handleAnswerChange(index, "text", e.target.value)
+                    }
+                    required
                   />
                 </Form.Group>
                 <Form.Check
                   type={question.type === "SingleChoice" ? "radio" : "checkbox"}
-                  name="correctAnswer"
-                  label="Correct"
+                  name="isCorrect"
+                  label="Correct?"
                   checked={a.isCorrect}
-                  onChange={(e) => handleAnswerChange(i, "isCorrect", e.target.checked)}
+                  onChange={(e) => {
+                    if (question.type === "SingleChoice") {
+                      const newAnswers = answers.map((ans, i) => ({
+                        ...ans,
+                        isCorrect: i === index,
+                      }));
+                      setAnswers(newAnswers);
+                    } else {
+                      handleAnswerChange(index, "isCorrect", e.target.checked);
+                    }
+                  }}
                 />
               </div>
             ))}
           </>
-        );
-      case "FillIn":
-        return (
+        ) : question.type === "FillIn" ? (
           <Form.Group className="mb-3">
             <Form.Label>Correct Answer</Form.Label>
             <Form.Control
               type="text"
-              value={textAnswer}
-              onChange={(e) => setTextAnswer(e.target.value)}
+              value={fillInAnswer}
+              onChange={(e) => setFillInAnswer(e.target.value)}
+              required
             />
           </Form.Group>
-        );
-      case "TrueFalse":
-        return (
+        ) : question.type === "TrueFalse" ? (
           <Form.Group className="mb-3">
-            <Form.Label>Answer</Form.Label>
-            <div>
-              <Form.Check
-                type="radio"
-                label="True"
-                name="truefalse"
-                checked={isCorrect === true}
-                onChange={() => setIsCorrect(true)}
-              />
-              <Form.Check
-                type="radio"
-                label="False"
-                name="truefalse"
-                checked={isCorrect === false}
-                onChange={() => setIsCorrect(false)}
-              />
-            </div>
+            <Form.Label>Correct Answer</Form.Label>
+            <Form.Select
+              value={trueFalseValue ? "true" : "false"}
+              onChange={(e) => setTrueFalseValue(e.target.value === "true")}
+            >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </Form.Select>
           </Form.Group>
-        );
-      default:
-        return <Alert variant="warning">Unknown question type</Alert>;
-    }
-  };
+        ) : (
+          <Alert variant="warning">Unknown question type</Alert>
+        )}
 
-  return (
-    <div className="p-3">
-      <h1>Add Answer for: {question.text}</h1>
-      {error && <Alert variant="danger">{error}</Alert>}
-      <Form onSubmit={handleSubmit}>
-        {renderFormFields()}
-        <Button type="submit" className="mt-3">
-          Save Answer
+        <Button variant="primary" type="submit">
+          Save Answers
         </Button>
       </Form>
     </div>

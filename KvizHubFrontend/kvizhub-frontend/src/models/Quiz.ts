@@ -6,6 +6,7 @@ export interface Quiz {
   difficulty: string;
   timeLimit: number;      // in minutes
   questionCount: number;
+  isPlayable: boolean;
 }
 
 // Za kreiranje kviza (bez id i questionCount jer se generišu na backendu)

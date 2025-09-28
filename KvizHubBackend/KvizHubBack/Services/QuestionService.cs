@@ -1,4 +1,5 @@
-﻿using KvizHubBack.DTOs.Question;
+﻿using KvizHubBack.DTOs.Answer;
+using KvizHubBack.DTOs.Question;
 using KvizHubBack.Models;
 using KvizHubBack.Repositories;
 using System;
@@ -84,7 +85,13 @@ namespace KvizHubBack.Services
                 QuizId = q.QuizId,
                 Text = q.Text,
                 Type = q.Type.ToString(),
-                Points = q.Points
+                Points = q.Points,
+                Answers = q.Answers?.Select(a => new AnswerDto
+                {
+                    Id = a.Id,
+                    Text = a.Text,
+                    IsCorrect = a.IsCorrect
+                }).ToList() ?? new List<AnswerDto>()
             };
         }
     }

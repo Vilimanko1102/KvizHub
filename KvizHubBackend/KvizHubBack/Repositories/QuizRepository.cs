@@ -73,5 +73,22 @@ namespace KvizHubBack.Repositories
                 .Include(qa => qa.User)
                 .ToList();
         }
+
+        public IEnumerable<Quiz> GetAllWithQuestions()
+        {
+            return _context.Quizzes
+                .Include(q => q.Questions)
+                    .ThenInclude(q => q.Answers) // <--- OVO JE BITNO
+                .ToList();
+        }
+
+        public Quiz? GetByIdWithQuestions(int id)
+        {
+            return _context.Quizzes
+                .Include(q => q.Questions)
+                    .ThenInclude(q => q.Answers) // <--- OVO JE BITNO
+                .Where(q => q.Id == id).ToList()[0];
+        }
+
     }
 }

@@ -11,5 +11,8 @@ namespace KvizHubBack.Repositories
         IEnumerable<Quiz> GetAll();
         IEnumerable<Quiz> Filter(string? category, string? difficulty, string? search);
         IEnumerable<QuizAttempt> GetQuizResults(int quizId);
+        IEnumerable<Quiz> GetAllWithQuestions();
+        Quiz? GetByIdWithQuestions(int id);
+
     }
 }

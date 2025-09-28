@@ -68,13 +68,13 @@ namespace KvizHubBack.Services
 
         public QuizDto GetById(int id)
         {
-            var quiz = _repo.GetById(id) ?? throw new Exception("Quiz not found");
+            var quiz = _repo.GetByIdWithQuestions(id) ?? throw new Exception("Quiz not found");
             return MapToDto(quiz);
         }
 
         public IEnumerable<QuizDto> GetAll()
         {
-            return _repo.GetAll().Select(MapToDto);
+            return _repo.GetAllWithQuestions().Select(MapToDto);
         }
 
         public IEnumerable<QuizDto> Filter(string? category, string? difficulty, string? search)
@@ -98,6 +98,9 @@ namespace KvizHubBack.Services
 
         private QuizDto MapToDto(Quiz quiz)
         {
+            bool hasQuestions = quiz.Questions != null && quiz.Questions.Any();
+            bool allQuestionsHaveAnswers = hasQuestions && quiz.Questions.All(q => q.Answers != null && q.Answers.Any());
+
             return new QuizDto
             {
                 Id = quiz.Id,
@@ -106,7 +109,8 @@ namespace KvizHubBack.Services
                 Category = quiz.Category,
                 Difficulty = quiz.Difficulty.ToString(),
                 TimeLimit = quiz.TimeLimit,
-                QuestionCount = quiz.Questions?.Count ?? 0
+                QuestionCount = quiz.Questions?.Count ?? 0,
+                IsPlayable = hasQuestions && allQuestionsHaveAnswers
             };
         }
     }

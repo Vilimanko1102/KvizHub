@@ -21,6 +21,7 @@ export default function QuizListPage() {
         console.log(localStorage["userRole"])
         console.log(isAdmin)
         const data = await QuizService.getAllQuizzes();
+        console.log(data)
         setQuizzes(data);
       } catch (error) {
         console.error("Greška pri učitavanju kvizova:", error);
@@ -71,6 +72,7 @@ export default function QuizListPage() {
                   : "Hard"
               }
               timeLimit={quiz.timeLimit} // placeholder
+              isPlayable = {quiz.isPlayable}
             />
           </Col>
         ))}

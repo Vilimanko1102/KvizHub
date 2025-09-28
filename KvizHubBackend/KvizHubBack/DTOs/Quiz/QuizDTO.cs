@@ -6,8 +6,12 @@
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
-        public string Difficulty { get; set; } = string.Empty; // "Easy", "Medium", "Hard"
-        public int TimeLimit { get; set; } // in minutes
+        public string Difficulty { get; set; } = string.Empty;
+        public int? TimeLimit { get; set; }
         public int QuestionCount { get; set; }
+
+        // Novo polje
+        public bool IsPlayable { get; set; }
     }
+
 }
