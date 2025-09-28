@@ -20,8 +20,14 @@ const difficultyColors = {
 const QuizCard: React.FC<QuizCardProps> = ({ id, title, description, questionCount, difficulty, timeLimit }) => {
     const navigate = useNavigate();
 
+    const isAdmin = localStorage.getItem("userRole") === "Admin";
+
     const handleStart = () => {
         navigate(`/quiz/${id}`);
+    };
+
+    const handleAddQuestion = () => {
+        navigate(`/admin/quiz/${id}/add-question`);
     };
 
     return (
@@ -34,9 +40,16 @@ const QuizCard: React.FC<QuizCardProps> = ({ id, title, description, questionCou
                     Difficulty: <span className={`text-${difficultyColors[difficulty]}`}>{difficulty}</span> <br />
                     Time: {timeLimit} min
                 </Card.Text>
-                <Button variant={difficultyColors[difficulty]} onClick={handleStart}>
-                    Start Quiz
-                </Button>
+
+                {isAdmin ? (
+                    <Button variant="primary" onClick={handleAddQuestion}>
+                        Add Question
+                    </Button>
+                ) : (
+                    <Button variant={difficultyColors[difficulty]} onClick={handleStart}>
+                        Start Quiz
+                    </Button>
+                )}
             </Card.Body>
         </Card>
     );

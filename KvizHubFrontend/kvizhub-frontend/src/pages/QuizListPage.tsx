@@ -1,6 +1,7 @@
 // QuizListPage.tsx
 import { useEffect, useState } from "react";
-import QuizService, { Quiz } from "../services/QuizService";
+import QuizService from "../services/QuizService";
+import { Quiz } from "../models/Quiz";
 import QuizCard from "../components/QuizCard";
 import { Container, Row, Col, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -61,15 +62,15 @@ export default function QuizListPage() {
               id={quiz.id}
               title={quiz.title}
               description={quiz.description}
-              questionCount={10} // placeholder
+              questionCount={quiz.questionCount} // placeholder
               difficulty={
-                quiz.difficulty === "EASY"
+                quiz.difficulty === "Easy"
                   ? "Easy"
-                  : quiz.difficulty === "MEDIUM"
+                  : quiz.difficulty === "Medium"
                   ? "Medium"
                   : "Hard"
               }
-              timeLimit={5} // placeholder
+              timeLimit={quiz.timeLimit} // placeholder
             />
           </Col>
         ))}

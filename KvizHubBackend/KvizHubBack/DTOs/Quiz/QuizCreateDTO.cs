@@ -7,5 +7,7 @@
         public string Category { get; set; } = string.Empty;
         public string Difficulty { get; set; } = string.Empty;
         public int TimeLimit { get; set; }
+
+        public int CreatedBy { get; set; }
     }
 }

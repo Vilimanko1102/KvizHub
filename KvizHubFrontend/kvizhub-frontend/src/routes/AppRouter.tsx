@@ -8,6 +8,9 @@ import UserResultsPage from '../pages/UserResultsPage';
 import AdminDashboardPage from '../pages/AdminDashboardPage';
 import LandingPage from '../pages/LandingPage';
 import { useAuth } from '../context/AuthContext';
+import CreateQuizPage from '../pages/CreateQuizPage';
+import AddQuestionPage from '../pages/AddQuestionPage';
+import AddAnswerPage from '../pages/AddAnswerPage';
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
     const { user } = useAuth();
@@ -16,7 +19,8 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 
 const AdminRoute = ({ children }: { children: JSX.Element }) => {
     const { user } = useAuth();
-    return user?.isAdmin ? children : <Navigate to="/login" />;
+    console.log(user?.role)
+    return user?.role == "Admin" ? children : <Navigate to="/login" />;
 };
 
 const AppRouter = () => {
@@ -32,6 +36,10 @@ const AppRouter = () => {
                     element={<PrivateRoute><QuizListPage /></PrivateRoute>}
                 />
                 <Route
+                    path="/quizzes/create"
+                    element={<PrivateRoute><CreateQuizPage /></PrivateRoute>}
+                />
+                <Route
                     path="/quiz/:id"
                     element={<PrivateRoute><QuizPage /></PrivateRoute>}
                 />
@@ -42,6 +50,22 @@ const AppRouter = () => {
                 <Route
                     path="/admin/*"
                     element={<AdminRoute><AdminDashboardPage /></AdminRoute>}
+                />
+                <Route
+                    path="/admin/quiz/:id/add-question"
+                    element={
+                        <AdminRoute>
+                            <AddQuestionPage />
+                        </AdminRoute>
+                    }
+                />
+                <Route
+                    path="/admin/question/:questionId/add-answer"
+                    element={
+                        <AdminRoute>
+                            <AddAnswerPage />
+                        </AdminRoute>
+                    }
                 />
                 <Route path="*" element={<Navigate to="/landing" />} />
             </Routes>

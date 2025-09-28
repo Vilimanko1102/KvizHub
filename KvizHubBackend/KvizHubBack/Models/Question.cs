@@ -2,8 +2,8 @@
 {
     public enum QuestionType
     {
-        Single,
-        Multiple,
+        SingleChoice,
+        MultipleChoice,
         TrueFalse,
         FillIn
     }
@@ -14,7 +14,6 @@
         public string Text { get; set; } = null!;
         public QuestionType Type { get; set; }
         public int Points { get; set; }
-
         public Quiz? Quiz { get; set; }
         public ICollection<Answer>? Answers { get; set; }
         public ICollection<UserAnswer>? UserAnswers { get; set; }

@@ -18,6 +18,7 @@ namespace KvizHubBack.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] QuizCreateDto dto) => Ok(_service.Create(dto));
 
+        
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] QuizUpdateDto dto) => Ok(_service.Update(id, dto));
 

@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const response = await loginUser({usernameOrEmail, password});
         console.log(response)
         localStorage.setItem("userRole", response.user.role);
+        localStorage.setItem("userId", response.user.id.toString())
         localStorage.setItem("token", response.token);
         setUser(response.user);
     };
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const register = async (data: { username: string; email: string; password: string; avatarUrl?: string }) => {
         const response = await registerUser(data);
         localStorage.setItem("userRole", response.user.role);
+        localStorage.setItem("userId", response.user.id.toString())
         localStorage.setItem("token", response.token);
         setUser(response.user);
     };

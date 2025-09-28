@@ -31,7 +31,8 @@ namespace KvizHubBack.Services
                 Description = dto.Description,
                 Category = dto.Category,
                 Difficulty = ToDifficulty(dto.Difficulty),
-                TimeLimit = dto.TimeLimit
+                TimeLimit = dto.TimeLimit,
+                CreatedBy = dto.CreatedBy
             };
 
             _repo.Add(quiz);
