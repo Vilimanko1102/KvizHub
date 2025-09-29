@@ -27,6 +27,23 @@ export interface QuestionDto {
     points: number;
 }
 
+// models/Question.ts
+export interface Question {
+  id: number;
+  text: string;
+  type: "SingleChoice" | "MultipleChoice" | "FillIn";
+  points: number;
+  quizId: number;
+}
+
+// models/QuestionUpdateDto.ts
+export interface QuestionUpdateDto {
+  text: string;
+  type: "SingleChoice" | "MultipleChoice" | "FillIn";
+  points: number;
+  quizId: number;
+}
+
 class QuestionService {
     private getAuthHeaders() {
         const token = localStorage.getItem("token");
@@ -54,6 +71,20 @@ class QuestionService {
         });
         return response.data;
     }
+
+    async deleteQuestion(id: number) {
+    const response = await axios.delete(`${API_URL}/${id}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return response.data;
+  }
+
+    async updateQuestion(id: number, quizData: QuestionUpdateDto): Promise<Question> {
+    const response = await axios.put(`${API_URL}/${id}`, quizData, {
+      headers: this.getAuthHeaders(),
+    });
+    return response.data;
+  }
 }
 
 export default new QuestionService();

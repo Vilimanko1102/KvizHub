@@ -84,11 +84,12 @@ const QuizCard: React.FC<QuizCardProps> = ({
                     <>
                         <Button
                             variant="info"
-                            className="me-2 mb-2"
+                            
+                            className="w-100 mb-2"
                             onClick={handleViewQuestions}
                         >
                             View Questions
-                        </Button>
+                        </Button> <br/>
                         <Button
                             variant="primary"
                             className="me-2 mb-2"
@@ -108,7 +109,7 @@ const QuizCard: React.FC<QuizCardProps> = ({
                             className="mb-2"
                             onClick={handleDeleteQuiz}
                         >
-                            Delete Quiz
+                            Delete Quiz 
                         </Button>
                     </>
                 ) : isPlayable ? (

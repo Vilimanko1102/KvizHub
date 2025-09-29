@@ -1,6 +1,5 @@
 import React, { JSX } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import QuizListPage from '../pages/QuizListPage';
 import QuizPage from '../pages/QuizPage';
@@ -14,6 +13,8 @@ import AddAnswerPage from '../pages/AddAnswerPage';
 import QuizPlayPage from '../pages/QuizPlayPage';
 import QuizResultPage from '../pages/QuizResultPage';
 import Navbar from '../components/Navbar';
+import EditQuizPage from '../pages/EditQuizPage';
+import EditQuestionPage from '../pages/EditQuestionPage';
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
     const { user } = useAuth();
@@ -23,7 +24,7 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 const AdminRoute = ({ children }: { children: JSX.Element }) => {
     const { user } = useAuth();
     console.log(user?.role)
-    return user?.role == "Admin" ? children : <Navigate to="/login" />;
+    return user?.role === "Admin" ? children : <Navigate to="/login" />;
 };
 
 const AppRouter = () => {
@@ -31,9 +32,8 @@ const AppRouter = () => {
         <Router>
             <Navbar/>
             <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
                 <Route path="/landing" element={<LandingPage/>}/>
+                <Route path="/register" element={<RegisterPage />} />
                 
                 <Route
                     path="/quizzes"
@@ -73,6 +73,25 @@ const AppRouter = () => {
                         </AdminRoute>
                     }
                 />
+
+                <Route
+                    path="/admin/quiz/:id/edit"
+                    element={
+                        <AdminRoute>
+                            <EditQuizPage />
+                        </AdminRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/question/:questionId/edit"
+                    element={
+                        <AdminRoute>
+                            <EditQuestionPage />
+                        </AdminRoute>
+                    }
+                />
+
                 <Route path="*" element={<Navigate to="/landing" />} />
             </Routes>
         </Router>

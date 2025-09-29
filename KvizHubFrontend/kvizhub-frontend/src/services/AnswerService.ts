@@ -16,10 +16,18 @@ export interface AnswerDto {
 }
 
 class AnswerService {
-    private getAuthHeaders() {
-        const token = localStorage.getItem("token");
-        return token ? { Authorization: `Bearer ${token}` } : {};
-    }
+      private getAuthHeaders() {
+    const token = localStorage.getItem("token");
+    return {
+      Authorization: `Bearer ${token}`,
+    };
+  }
+
+  async deleteAnswer(answerId: number): Promise<void> {
+    await axios.delete(`${API_URL}/${answerId}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
 
     async createAnswer(dto: AnswerCreateDto): Promise<AnswerDto> {
         const response = await axios.post(`${API_URL}`, dto, {
@@ -27,6 +35,13 @@ class AnswerService {
         });
         return response.data;
     }
+
+    async getAnswersByQuestionId(questionId: number) {
+    const response = await axios.get(`${API_URL}/question/${questionId}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return response.data;
+  }
 }
 
 export default new AnswerService();
