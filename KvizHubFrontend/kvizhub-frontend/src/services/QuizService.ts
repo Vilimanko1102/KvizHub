@@ -1,6 +1,27 @@
 import axios from "axios";
 import { QuizCreateDto, Quiz, QuizUpdateDto } from "../models/Quiz";
+import { AnswerDto } from "./AnswerService";
 
+export interface QuizWithQuestionsDto {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  difficulty: string;
+  timeLimit: number;
+  questionCount: number;
+  isPlayable: boolean;
+  questions: QuestionDtoWithAnswers[];
+}
+
+export interface QuestionDtoWithAnswers {
+  id: number;
+  quizId: number;
+  text: string;
+  type: string;
+  points: number;
+  answers: AnswerDto[];
+}
 
 
 const API_URL = process.env.REACT_APP_API_URL_QUIZ; // prilagodi ako ti je bek na drugom portu ili ruti
@@ -42,6 +63,11 @@ class QuizService {
       },
     });
   }
+
+  async getQuizByIdWithQuestions(id: number): Promise<QuizWithQuestionsDto> {
+    const response = await fetch(`${API_URL}/${id}/full`);
+    return response.json();
+}
 }
 
 export default new QuizService();

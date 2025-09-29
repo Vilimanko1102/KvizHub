@@ -1,6 +1,16 @@
 import axios from "axios";
+import { AnswerDto } from "./AnswerService";
 
 const API_URL = process.env.REACT_APP_API_URL_QUESTION;
+
+export interface QuestionWithAnswersDto {
+    id: number;
+    quizId: number;
+    text: string;
+    type: string;
+    points: number;
+    answers: AnswerDto[];
+}
 
 export interface QuestionCreateDto {
     quizId: number;

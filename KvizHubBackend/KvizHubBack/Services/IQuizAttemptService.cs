@@ -5,7 +5,7 @@ namespace KvizHubBack.Services
 {
     public interface IQuizAttemptService
     {
-        QuizAttemptDto Create(QuizAttemptCreateDto dto);
+        QuizAttemptDto SubmitAttempt(QuizAttemptSubmitDto dto);
         QuizAttemptDto Update(int id, QuizAttemptUpdateDto dto);
         void Delete(int id);
         QuizAttemptDto GetById(int id);

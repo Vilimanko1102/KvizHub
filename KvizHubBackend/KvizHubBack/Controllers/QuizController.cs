@@ -43,5 +43,19 @@ namespace KvizHubBack.Controllers
 
         [HttpGet("{id}/results")]
         public IActionResult GetResults(int id) => Ok(_service.GetQuizResults(id));
+
+        [HttpGet("{id}/full")]
+        public ActionResult<QuizDtoWithQuestions> GetByIdWithQuestions(int id)
+        {
+            try
+            {
+                var quiz = _service.GetByIdWithQuestions(id);
+                return Ok(quiz);
+            }
+            catch (Exception e)
+            {
+                return NotFound(e.Message);
+            }
+        }
     }
 }

@@ -17,9 +17,9 @@ namespace KvizHubBack.Controllers
         }
 
         [HttpPost]
-        public ActionResult<QuizAttemptDto> Create(QuizAttemptCreateDto dto)
+        public ActionResult<QuizAttemptDto> Create(QuizAttemptSubmitDto dto)
         {
-            var result = _service.Create(dto);
+            var result = _service.SubmitAttempt(dto);
             return Ok(result);
         }
 

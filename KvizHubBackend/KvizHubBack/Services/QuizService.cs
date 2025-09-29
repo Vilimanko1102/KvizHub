@@ -1,4 +1,6 @@
-﻿using KvizHubBack.DTOs.Quiz;
+﻿using KvizHubBack.DTOs.Answer;
+using KvizHubBack.DTOs.Question;
+using KvizHubBack.DTOs.Quiz;
 using KvizHubBack.Models;
 using KvizHubBack.Repositories;
 using System.Collections.Generic;
@@ -94,6 +96,32 @@ namespace KvizHubBack.Services
                 Percentage = a.Percentage,
                 FinishedAt = a.FinishedAt!.Value
             });
+        }
+
+        public QuizDtoWithQuestions GetByIdWithQuestions(int id)
+        {
+            var quiz = _repo.GetByIdWithQuestions(id) ?? throw new Exception("Quiz not found");
+
+            return new QuizDtoWithQuestions
+            {
+                Id = quiz.Id,
+                Title = quiz.Title,
+                Description = quiz.Description,
+                Difficulty = quiz.Difficulty.ToString(),
+                TimeLimit = quiz.TimeLimit,
+                Questions = quiz.Questions.Select(q => new QuestionDto
+                {
+                    Id = q.Id,
+                    Text = q.Text,
+                    Type = q.Type.ToString(),
+                    Answers = q.Answers.Select(a => new AnswerDto
+                    {
+                        Id = a.Id,
+                        Text = a.Text,
+                        IsCorrect = a.IsCorrect
+                    }).ToList()
+                }).ToList()
+            };
         }
 
         private QuizDto MapToDto(Quiz quiz)

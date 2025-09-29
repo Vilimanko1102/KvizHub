@@ -93,6 +93,7 @@ namespace KvizHubBack.Services
                     QuizAttemptId = a.QuizAttemptId,
                     QuestionId = a.QuestionId,
                     SelectedAnswerIds = a.SelectedAnswerIds,
+                    SelectedAnswerIdsCsv = a.SelectedAnswerIdsCsv,
                     TextAnswer = a.TextAnswer,
                     IsCorrect = a.IsCorrect
                 });

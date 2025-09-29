@@ -31,7 +31,7 @@ const QuizCard: React.FC<QuizCardProps> = ({
     const isAdmin = localStorage.getItem("userRole") === "Admin";
 
     const handleStart = () => {
-        navigate(`/quiz/${id}`);
+        navigate(`/quiz/${id}/play`);
     };
 
     const handleAddQuestion = () => {

@@ -11,5 +11,7 @@ namespace KvizHubBack.Services
         IEnumerable<QuizDto> GetAll();
         IEnumerable<QuizDto> Filter(string? category, string? difficulty, string? search);
         IEnumerable<QuizResultDto> GetQuizResults(int quizId);
+
+        public QuizDtoWithQuestions GetByIdWithQuestions(int id);
     }
 }

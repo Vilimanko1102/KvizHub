@@ -7,11 +7,11 @@ namespace KvizHubBack.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserAnswersController : ControllerBase
+    public class UserAnswerController : ControllerBase
     {
         private readonly IUserAnswerService _service;
 
-        public UserAnswersController(IUserAnswerService service)
+        public UserAnswerController(IUserAnswerService service)
         {
             _service = service;
         }

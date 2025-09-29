@@ -113,10 +113,6 @@ namespace KvizHubBack.Data
                       .HasForeignKey(ua => ua.QuizAttemptId)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(ua => ua.Question)
-                      .WithMany()
-                      .HasForeignKey(ua => ua.QuestionId)
-                      .OnDelete(DeleteBehavior.Cascade);
 
                 // SelectedAnswerIds je lista, u bazi može biti JSON ili drugi tip
                 entity.Ignore(ua => ua.SelectedAnswerIds);
