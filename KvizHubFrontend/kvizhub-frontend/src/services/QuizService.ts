@@ -27,6 +27,12 @@ export interface QuestionDtoWithAnswers {
 const API_URL = process.env.REACT_APP_API_URL_QUIZ; // prilagodi ako ti je bek na drugom portu ili ruti
 
 class QuizService {
+
+  private getAuthHeaders() {
+    const token = localStorage.getItem("token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }
+
   async getAllQuizzes(): Promise<Quiz[]> {
     const response = await axios.get(`${API_URL}`);
     return response.data;
@@ -47,21 +53,18 @@ class QuizService {
     return response.data;
   }
 
-  async updateQuiz(id: number, quizData: QuizUpdateDto, token: string): Promise<Quiz> {
+  async updateQuiz(id: number, quizData: QuizUpdateDto): Promise<Quiz> {
     const response = await axios.put(`${API_URL}/${id}`, quizData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this.getAuthHeaders(),
     });
     return response.data;
   }
 
-  async deleteQuiz(id: number, token: string): Promise<void> {
-    await axios.delete(`${API_URL}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  async deleteQuiz(id: number) {
+    const response = await axios.delete(`${API_URL}/${id}`, {
+      headers: this.getAuthHeaders(),
     });
+    return response.data;
   }
 
   async getQuizByIdWithQuestions(id: number): Promise<QuizWithQuestionsDto> {

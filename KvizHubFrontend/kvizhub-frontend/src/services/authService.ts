@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AuthResponse } from "../models/AuthResponse";
 
-const API_URL = process.env.REACT_APP_API_URL_USERS; // npr. http://localhost:5000
+const API_URL = process.env.REACT_APP_API_URL_USERS; 
 
 // ====================
 // Frontend modeli / DTO-i

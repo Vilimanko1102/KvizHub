@@ -13,6 +13,7 @@ import AddQuestionPage from '../pages/AddQuestionPage';
 import AddAnswerPage from '../pages/AddAnswerPage';
 import QuizPlayPage from '../pages/QuizPlayPage';
 import QuizResultPage from '../pages/QuizResultPage';
+import Navbar from '../components/Navbar';
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
     const { user } = useAuth();
@@ -28,6 +29,7 @@ const AdminRoute = ({ children }: { children: JSX.Element }) => {
 const AppRouter = () => {
     return (
         <Router>
+            <Navbar/>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />

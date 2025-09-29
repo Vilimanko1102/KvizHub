@@ -3,7 +3,7 @@ export interface Quiz {
   title: string;
   description: string;
   category: string;
-  difficulty: string;
+  difficulty: "Easy" | "Medium" | "Hard";
   timeLimit: number;      // in minutes
   questionCount: number;
   isPlayable: boolean;
