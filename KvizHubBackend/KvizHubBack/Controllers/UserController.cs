@@ -72,12 +72,12 @@ namespace KvizHubBack.Controllers
         // Dohvatanje korisnika po username
         // GET: api/users/by-username/{username}
         // ========================
-        [HttpGet("by-username/{username}")]
-        public ActionResult<UserDto> GetByUsername(string username)
+        [HttpGet("{id}")]
+        public ActionResult<UserDto> GetById(int id)
         {
             try
             {
-                var user = _service.GetByUsername(username);
+                var user = _service.GetById(id);
                 return Ok(user);
             }
             catch (Exception ex)

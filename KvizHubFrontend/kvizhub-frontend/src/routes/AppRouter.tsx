@@ -15,6 +15,10 @@ import QuizResultPage from '../pages/QuizResultPage';
 import Navbar from '../components/Navbar';
 import EditQuizPage from '../pages/EditQuizPage';
 import EditQuestionPage from '../pages/EditQuestionPage';
+import UserProfilePage from '../pages/UserProfilePage';
+import LeaderboardPage from '../pages/LeaderboardPage';
+import UserAttemptsPage from '../pages/UserAttemptsPage';
+import AttemptDetailsPage from '../pages/AttemptDetailsPage';
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
     const { user } = useAuth();
@@ -56,7 +60,11 @@ const AppRouter = () => {
                     element={<AdminRoute><AdminDashboardPage /></AdminRoute>}
                 />
                 <Route path="/quiz/:id/play" element={<QuizPlayPage />} />
+                <Route path="/profile" element={<UserProfilePage />} />
+                <Route path="/my-attempts" element={<UserAttemptsPage />} />
                 <Route path="/quiz/:attemptId/result" element={<QuizResultPage />} />
+                <Route path="/quiz/:attemptId/details" element={<AttemptDetailsPage />} />
+                <Route path="/quiz/:id/attempts" element={<LeaderboardPage />} />
                 <Route
                     path="/admin/quiz/:id/add-question"
                     element={

@@ -56,14 +56,14 @@ class QuizAttemptService {
   return response.data;
 }
 
-  async getAttemptsByUser(userId: number) {
+  async getAttemptsByUserId(userId: number) {
     const response = await axios.get(`${API_URL}/user/${userId}`, {
       headers: this.getAuthHeaders(),
     });
     return response.data;
   }
 
-  async getAttemptsByQuiz(quizId: number) {
+  async getAttemptsByQuizId(quizId: number) {
     const response = await axios.get(`${API_URL}/quiz/${quizId}`, {
       headers: this.getAuthHeaders(),
     });

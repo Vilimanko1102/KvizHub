@@ -32,7 +32,6 @@ export interface UserAuthResponse {
     expiration: string;
     user: User;
 }
-
 // ====================
 // Auth service
 // ====================
@@ -46,12 +45,18 @@ export const registerUser = async (registerData: RegisterDto): Promise<UserAuthR
     return data;
 };
 
-export const getCurrentUser = async (token: string): Promise<User> => {
+export const getCurrentUser = async (token: string|null): Promise<User> => {
     const { data } = await axios.get<User>(`${API_URL}/me`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     return data;
 };
 
-const AuthService = { loginUser, registerUser, getCurrentUser };
+export const getUserById = async (id: number): Promise<User> => {
+    const { data } = await axios.get<User>(`${API_URL}/${id}`, {
+    });
+    return data;
+};
+
+const AuthService = { loginUser, registerUser, getCurrentUser, getUserById };
 export default AuthService;

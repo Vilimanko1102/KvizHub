@@ -26,6 +26,7 @@ const AppNavbar: React.FC = () => {
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/quizzes">Lista kvizova</Nav.Link>
             <Nav.Link as={Link} to="/profile">Profil</Nav.Link>
+            <Nav.Link as={Link} to="/my-attempts">Moji rezultati</Nav.Link> {/* NOVO */}
             {user?.role === "Admin" && (
                 <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
             )}

@@ -12,7 +12,7 @@ interface QuizCardProps {
     difficulty: "Easy" | "Medium" | "Hard";
     timeLimit: number;
     isPlayable: boolean; 
-    onDeleted?: () => void; // callback da parent osveži listu
+    onDeleted?: () => void;
 }
 
 const difficultyColors = {
@@ -35,21 +35,11 @@ const QuizCard: React.FC<QuizCardProps> = ({
     const navigate = useNavigate();
     const isAdmin = localStorage.getItem("userRole") === "Admin";
 
-    const handleStart = () => {
-        navigate(`/quiz/${id}/play`);
-    };
-
-    const handleAddQuestion = () => {
-        navigate(`/admin/quiz/${id}/add-question`);
-    };
-
-    const handleViewQuestions = () => {
-        navigate(`/quiz/${id}`);
-    };
-
-    const handleUpdateQuiz = () => {
-        navigate(`/admin/quiz/${id}/edit`);
-    };
+    const handleStart = () => navigate(`/quiz/${id}/play`);
+    const handleAddQuestion = () => navigate(`/admin/quiz/${id}/add-question`);
+    const handleViewQuestions = () => navigate(`/quiz/${id}`);
+    const handleUpdateQuiz = () => navigate(`/admin/quiz/${id}/edit`);
+    const handleViewAttempts = () => navigate(`/quiz/${id}/attempts`);
 
     const handleDeleteQuiz = async () => {
         if (window.confirm("Are you sure you want to delete this quiz?")) {
@@ -80,16 +70,25 @@ const QuizCard: React.FC<QuizCardProps> = ({
                     <strong>Time:</strong> {timeLimit} min
                 </Card.Text>
 
+                {/* Leaderboard dugme (vidljivo svima) */}
+                <Button
+                    variant="secondary"
+                    className="w-100 mb-3"
+                    onClick={handleViewAttempts}
+                >
+                    View Leaderboard
+                </Button>
+
                 {isAdmin ? (
                     <>
                         <Button
                             variant="info"
-                            
                             className="w-100 mb-2"
                             onClick={handleViewQuestions}
                         >
                             View Questions
-                        </Button> <br/>
+                        </Button>
+                        <br />
                         <Button
                             variant="primary"
                             className="me-2 mb-2"
@@ -109,7 +108,7 @@ const QuizCard: React.FC<QuizCardProps> = ({
                             className="mb-2"
                             onClick={handleDeleteQuiz}
                         >
-                            Delete Quiz 
+                            Delete Quiz
                         </Button>
                     </>
                 ) : isPlayable ? (
