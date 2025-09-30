@@ -3,15 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import QuizService from "../services/QuizService";
 import { Container, Form, Button, Spinner, Alert } from "react-bootstrap";
+import { QuizFormState } from "../models/Quiz";
 
-interface QuizFormState {
-  title: string;
-  description: string;
-  category: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  timeLimit: number;
-  isPlayable: boolean;
-}
+
 
 export default function EditQuizPage() {
   const { id } = useParams<{ id: string }>();
@@ -159,16 +153,6 @@ export default function EditQuizPage() {
             onChange={handleChange}
             min={1}
             required
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="isPlayable">
-          <Form.Check
-            type="checkbox"
-            label="Playable"
-            name="isPlayable"
-            checked={quiz.isPlayable}
-            onChange={handleChange}
           />
         </Form.Group>
 
