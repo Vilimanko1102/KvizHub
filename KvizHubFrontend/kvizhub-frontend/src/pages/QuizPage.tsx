@@ -4,20 +4,11 @@ import QuestionService from "../services/QuestionService";
 import { Button, Spinner } from "react-bootstrap";
 import { Quiz } from "../models/Quiz";
 import QuizService from "../services/QuizService";
+import { QuestionDto } from "../models/Question";
 
-interface QuestionDto {
-  id: number;
-  text: string;
-  type: string;
-  points: number;
-  answers?: AnswerDto[];
-}
 
-interface AnswerDto {
-  id: number;
-  text: string;
-  isCorrect: boolean;
-}
+
+
 
 const QuizPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

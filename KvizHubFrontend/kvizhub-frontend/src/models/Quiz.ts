@@ -27,3 +27,12 @@ export interface QuizUpdateDto {
   difficulty?: string;
   timeLimit?: number;
 }
+
+export interface QuizFormState {
+  title: string;
+  description: string;
+  category: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  timeLimit: number;
+  isPlayable: boolean;
+}
